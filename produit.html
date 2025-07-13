@@ -46,8 +46,9 @@
           </a>
         </li>   
         <li>
-          <a class="navbar-link" href="panier.html">
-             <span class="ion-icon"><ion-icon name="cart-outline"></ion-icon></span>
+          <a class="navbar-link cart-icon" href="panier.html">
+            <span class="ion-icon"><ion-icon name="cart-outline"></ion-icon></span>
+            <span id="cart-count" class="badge">0</span>
             <span class="text">Panier</span>
           </a>
         </li>
@@ -145,8 +146,14 @@
   </footer>
 
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <script>
+    // Met à jour dynamiquement le badge du panier
+    function updateCartCount() {
+      const panier = JSON.parse(localStorage.getItem("panier")) || [];
+      document.getElementById("cart-count").textContent = panier.length;
+    }
+  </script>
   <script src="js/script.js"></script>
 </body>
 </html>

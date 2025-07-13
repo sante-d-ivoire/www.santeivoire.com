@@ -46,8 +46,9 @@
           </a>
         </li>   
         <li>
-          <a class="navbar-link" href="panier.html">
-             <span class="ion-icon"><ion-icon name="cart-outline"></ion-icon></span>
+          <a class="navbar-link cart-icon" href="panier.html">
+            <span class="ion-icon"><ion-icon name="cart-outline"></ion-icon></span>
+            <span id="cart-count" class="badge">0</span>
             <span class="text">Panier</span>
           </a>
         </li>
@@ -79,8 +80,10 @@
         <button class="btn add-to-cart"
                 data-id="1"
                 data-name="Le Cancer"
-                data-price="18 000"
-                data-image="images/cancer.png">
+                data-price="18000"
+                data-image="images/cancer.png"
+                onclick="ajouterAuPanier({ id: 1, nom: 'Produit A', prix: 10 })"
+                >
         Ajouter au panier</button>
       </div>
 
@@ -92,8 +95,9 @@
         <button class="btn add-to-cart"
           data-id="2"
           data-name="En bonne sante et forts"
-          data-price="18 000"
-          data-image="images/En-bonne-sante-et-forts-.png">
+          data-price="18000"
+          data-image="images/En-bonne-sante-et-forts-.png"
+          onclick="ajouterAuPanier({ id: 1, nom: 'Produit A', prix: 10 })">
           
           Ajouter au panier</button>
       </div>
@@ -106,21 +110,23 @@
         <button class="btn add-to-cart"
                 data-id="3"
                 data-name="Le vrai pouvoir de LExercice Physique"
-                data-price="18 000"
-                data-image="images/Le-vrai-pouvoir-de-LExercice-Physique.png">
+                data-price="18000"
+                data-image="images/Le-vrai-pouvoir-de-LExercice-Physique.png"
+                onclick="ajouterAuPanier({ id: 1, nom: 'Produit A', prix: 10 })">
           Ajouter au panier</button>
       </div>
 
       <div class="product-card">
         <img src="images/Sante-par-les-boissons.png" alt="Livre santé naturelle">
         <h3>Sante par les boissons</h3>
-        <p class="price">18 000 Fcfa</p>
+        <p class="price">32 000 Fcfa</p>
         <a href="produit.html?id=1" class="btn">Voir produit</a>
         <button class="btn add-to-cart"
                 data-id="4"
                 data-name="Sante par les boissons"
-                data-price="18 000"
-                data-image="images/Sante-par-les-boissons.png">
+                data-price="18000"
+                data-image="images/Sante-par-les-boissons.png"
+                onclick="ajouterAuPanier({ id: 1, nom: 'Produit A', prix: 10 })">
           
           Ajouter au panier</button>
       </div>
@@ -133,8 +139,9 @@
         <button class="btn add-to-cart"
                 data-id="5"
                 data-name="Sante par les boissons"
-                data-price="18 000"
-                data-image="images/A-Healthy-Body.png">
+                data-price="18000"
+                data-image="images/A-Healthy-Body.png"
+                onclick="ajouterAuPanier({ id: 1, nom: 'Produit A', prix: 10 })">
           
           Ajouter au panier</button>
       </div>
@@ -147,8 +154,9 @@
         <button class="btn add-to-cart"
                 data-id="6"
                 data-name="Des aliments qui guerissent"
-                data-price="18 000"
-                data-image="images/Des-aliments-qui-guerissent.png">
+                data-price="18000"
+                data-image="images/Des-aliments-qui-guerissent.png"
+                onclick="ajouterAuPanier({ id: 1, nom: 'Produit A', prix: 10 })">
           
           Ajouter au panier</button>
       </div>
@@ -159,13 +167,12 @@
         <p class="price">18 000 Fcfa</p>
         <a href="produit.html?id=1" class="btn">Voir produit</a>
         <button class="btn add-to-cart"
-        data-id="7"
+                data-id="7"
                 data-name="Des plantes qui guerissen"
-                data-price="18 000"
+                data-price="18000"
                 data-image="images/Des-plantes-qui-guerissent.png"
-        >
-          
-          Ajouter au panier</button>
+                onclick="ajouterAuPanier({ id: 1, nom: 'Produit A', prix: 10 })"
+        >Ajouter au panier</button>
       </div>
 
       <!-- Produit 2 -->
@@ -175,8 +182,11 @@
         <p class="price">3 €</p>
         <a href="produit.html?id=2" class="btn">Voir produit</a>
         <button class="btn add-to-cart"
-                data-id=""
-                data-name=""
+                data-id="8"
+                data-name="Jus Détox Citron-Gingembre"
+                data-price="18000"
+                data-image="images/²"
+                onclick="ajouterAuPanier({ id: 1, nom: 'Produit A', prix: 10 })"
         >Ajouter au panier</button>
       </div>
 
@@ -200,8 +210,34 @@
   </footer>
 
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <script>
+  // Met à jour dynamiquement le badge du panier
+  function updateCartCount() {
+    const panier = JSON.parse(localStorage.getItem("panier")) || [];
+    document.getElementById("cart-count").textContent = panier.length;
+  }
 
+
+  // Fonction pour ajouter un produit au panier
+  function addToCart(product) {
+  let cart = getCart();
+  const existing = cart.find(p => p.id === product.id);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ ...product, qty: 1 });
+  }
+  saveCart(cart);
+  alert("Produit ajouté au panier !");
+
+    // Mise à jour immédiate du compteur
+    updateCartCount();
+  }
+
+  // Mettre à jour dès le chargement de la page
+  document.addEventListener("DOMContentLoaded", updateCartCount);
+  </script>
   <script src="js/script.js"></script>
 </body>
 </html>

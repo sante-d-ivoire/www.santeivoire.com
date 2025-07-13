@@ -47,8 +47,9 @@
           </a>
         </li>   
         <li>
-          <a class="navbar-link" href="panier.html">
-             <span class="ion-icon"><ion-icon name="cart-outline"></ion-icon></span>
+          <a class="navbar-link cart-icon" href="panier.html">
+            <span class="ion-icon"><ion-icon name="cart-outline"></ion-icon></span>
+            <span id="cart-count" class="badge">0</span>
             <span class="text">Panier</span>
           </a>
         </li>
@@ -82,23 +83,49 @@
         </tbody>
       </table>
 
-      <div class="cart-summary">
-        <p><strong>Total :</strong> <span id="cart-total">0 €</span></p>
+      <div class="total">
+        <p><strong>Total :</strong> <span id="cart-total">0 Fcfa</span></p>
         <button class="btn">Valider la commande</button>
       </div>
     </div>
   </section>
 
   <!-- Pied de page -->
-  <footer>
+  <footer class="panier-footer">
     <p>&copy; 2025 Santé Naturelle. Tous droits réservés.</p>
   </footer>
 
 
 
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <script>
+  // Met à jour dynamiquement le badge du panier
+  function updateCartCount() {
+    const panier = JSON.parse(localStorage.getItem("panier")) || [];
+    document.getElementById("cart-count").textContent = panier.length;
+  }
 
+  // Fonction pour ajouter un produit au panier
+  function addToCart(product) {
+  let cart = getCart();
+  const existing = cart.find(p => p.id === product.id);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ ...product, qty: 1 });
+  }
+  saveCart(cart);
+  alert("Produit ajouté au panier !");
+
+    // Mise à jour immédiate du compteur
+    updateCartCount();
+  }
+
+  // Mettre à jour dès le chargement de la page
+  document.addEventListener("DOMContentLoaded", updateCartCount);
+  </script>
+  
   <script src="js/script.js"></script>
 </body>
 </html>

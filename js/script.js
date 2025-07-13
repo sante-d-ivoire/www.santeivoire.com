@@ -26,48 +26,51 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// PANIER LOCAL STORAGE
+// Gestion du panier
+document.addEventListener('DOMContentLoaded', () => {
+  // Charger le panier à l'affichage de panier.html
+  displayCart();
+
+  // Écoute des clics sur la quantité
+  document.addEventListener('input', function (e) {
+    if (e.target.classList.contains('qty-input')) {
+      let cart = getCart();
+      const index = e.target.dataset.index;
+      cart[index].qty = parseInt(e.target.value) || 1;
+      saveCart(cart);
+      displayCart();
+    }
+  });
+
+  // Écoute du bouton supprimer
+  document.addEventListener('click', function (e) {
+    if (e.target.classList.contains('remove-item')) {
+      let cart = getCart();
+      const index = e.target.dataset.index;
+      cart.splice(index, 1);
+      saveCart(cart);
+      displayCart();
+    }
+  });
+});
+
+// Obtenir le panier depuis localStorage
 function getCart() {
   return JSON.parse(localStorage.getItem('panier')) || [];
 }
 
+// Sauvegarder le panier dans localStorage
 function saveCart(cart) {
   localStorage.setItem('panier', JSON.stringify(cart));
 }
 
-
-function addToCart(product) {
-  let cart = getCart();
-  const existing = cart.find(p => p.id === product.id);
-  if (existing) {
-    existing.qty += 1;
-  } else {
-    cart.push({...product, qty: 1});
-  }
-  saveCart(cart);
-  alert("Produit ajouté au panier !");
-}
-
-// BOUTIQUE — ajout au panier
-document.querySelectorAll('.add-to-cart').forEach(button => {
-  button.addEventListener('click', () => {
-    const product = {
-      id: button.dataset.id,
-      name: button.dataset.name,
-      price: parseFloat(button.dataset.price),
-      image: button.dataset.image
-    };
-    addToCart(product);
-  });
-});
-
-// PANIER — affichage dans panier.html
+// Afficher le contenu du panier
 function displayCart() {
   const table = document.getElementById('cart-items');
-  if (!table) return; // Ne rien faire si on n'est pas sur la page panier
-  
   const total = document.getElementById('cart-total');
-  let cart = JSON.parse(localStorage.getItem('panier')) || [];
+  if (!table || !total) return;
+
+  let cart = getCart();
   table.innerHTML = '';
   let totalPrice = 0;
 
@@ -79,46 +82,42 @@ function displayCart() {
 
     const row = document.createElement('tr');
     row.innerHTML = `
-      <td><img src="${item.image}" alt="${item.name}" style="height:50px;vertical-align:middle;"> ${item.name}</td>
-      <td>${item.price.toFixed(2)} Fcfa</td>
-      <td><input type="number" min="1" value="${item.qty}" data-index="${index}" class="qty-input" style="width:50px;"/></td>
-      <td>${subtotal.toFixed(2)} Fcfa</td>
+      <td><img src="${item.image}" alt="${item.name}" style="height:40px;"> ${item.name}</td>
+      <td>${price.toFixed(0)} Fcfa</td>
+      <td><input type="number" min="1" value="${qty}" data-index="${index}" class="qty-input" style="width:50px;"></td>
+      <td>${subtotal.toFixed(0)} Fcfa</td>
       <td><button class="remove-item" data-index="${index}">❌</button></td>
     `;
     table.appendChild(row);
   });
 
-  total.textContent = `${totalPrice.toFixed(2)} Fcfa`;
+  total.textContent = `${totalPrice.toFixed(0)} Fcfa`;
 }
 
-// PANIER — mise à jour quantité & suppression
-document.addEventListener('input', function(e) {
-  if (e.target.classList.contains('qty-input')) {
-    const cart = getCart();
-    const index = e.target.dataset.index;
-    cart[index].qty = parseInt(e.target.value) || 1;
-    saveCart(cart);
-    displayCart();
-  }
+
+
+// Activer les boutons "Ajouter au panier" sur la boutique
+document.addEventListener('DOMContentLoaded', () => {
+  const buttons = document.querySelectorAll('.add-to-cart');
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      const product = {
+        id: button.dataset.id,
+        name: button.dataset.name,
+        price: parseFloat(button.dataset.price),
+        image: button.dataset.image
+      };
+      addToCart(product);
+    });
+  });
 });
 
-document.addEventListener('click', function(e) {
-  if (e.target.classList.contains('remove-item')) {
-    let cart = getCart();
-    const index = e.target.dataset.index;
-    cart.splice(index, 1);
-    saveCart(cart);
-    displayCart();
-  }
-});
-
-// Charger automatiquement le panier si sur la page
-document.addEventListener('DOMContentLoaded', displayCart);
 
 
 // Témoignages Carousel automatique
 document.addEventListener('DOMContentLoaded', () => {
   const track = document.querySelector('.carousel-track');
+  if (!track) return;
   const cards = Array.from(track.children);
   const prevButton = document.querySelector('.prev-btn');
   const nextButton = document.querySelector('.next-btn');
